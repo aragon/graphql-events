@@ -1,0 +1,6 @@
+{
+  "Test": {
+    "schema": "https://api.thegraph.com/subgraphs/name/aragon/aragon-court-rinkeby",
+    "interval": 5000
+  }
+}

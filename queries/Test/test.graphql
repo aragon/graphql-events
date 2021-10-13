@@ -1,0 +1,21 @@
+query Test {
+  jurors(first: 5) {
+    id
+    drafts {
+      weight
+      round {
+        id
+        dispute {
+          id
+          state
+        }
+        draftTermId
+        state
+        stateInt
+        vote {
+          winningOutcome
+        }
+      }
+    }
+  }
+}

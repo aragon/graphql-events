@@ -1,0 +1,29 @@
+{
+   "name": "graphql-events",
+   "version": "0.0.1",
+   "description": "Generates event from graphql queries",
+   "main": "dist/index.js",
+   "author": "Mathias Scherer <mathias@aragon.org>",
+   "license": "MIT",
+   "private": false,
+   "scripts": {
+      "build": "tsc -p tsconfig.json",
+      "start": "node dist/index.js"
+   },
+   "devDependencies": {
+      "typescript": "^4.4.4"
+   },
+   "dependencies": {
+      "@apollo/client": "^3.4.16",
+      "@google-cloud/pubsub": "^2.18.1",
+      "@graphql-tools/load": "^7.3.2",
+      "@graphql-tools/url-loader": "^7.2.0",
+      "cross-fetch": "^3.1.4",
+      "dotenv": "^10.0.0",
+      "graphql": "^15.6.1",
+      "mysql": "^2.14.1",
+      "pg": "^8.7.1",
+      "reflect-metadata": "^0.1.10",
+      "typeorm": "0.2.38"
+   }
+}
