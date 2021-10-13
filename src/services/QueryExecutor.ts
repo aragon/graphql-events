@@ -32,10 +32,10 @@ export default class QueryExecutor {
    * Executes the queries found in the queries directory
    * and returns the result
    *
-   * @return {Promise<ExecutionResult[]>}
+   * @return {Promise<Object[]>}
    * @memberof QueryExecutor
    */
-  public async execQueries(): Promise<ExecutionResult[]> {
+  public async execQueries(): Promise<Object[]> {
     await this.isLoadingSchema;
     const graphqlPromises: Array<Promise<ExecutionResult>> = [];
     for (const query of this.queries2Exec) {
@@ -53,8 +53,8 @@ export default class QueryExecutor {
         });
       graphqlPromises.push(queryPromise);
     }
-    const results = Promise.all(graphqlPromises);
-    return results;
+    const results = await Promise.all(graphqlPromises);
+    return results.map(result => result.data as Object);
   }
 
   /**
