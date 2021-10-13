@@ -1,6 +1,6 @@
 {
-  "Test": {
-    "schema": "https://api.thegraph.com/subgraphs/name/aragon/aragon-court-rinkeby",
-    "interval": 5000
+  "govern-rinkeby": {
+    "schema": "https://api.thegraph.com/subgraphs/name/aragon/aragon-govern-rinkeby",
+    "interval": 60000
   }
 }

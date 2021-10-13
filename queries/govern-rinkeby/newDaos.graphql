@@ -1,0 +1,8 @@
+query {
+  daos(orderBy:createdAt, orderDirection: desc, first:1) {
+    id
+    name
+    token
+    createdAt
+  }
+}
