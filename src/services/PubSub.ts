@@ -3,6 +3,7 @@ import { createHmac } from "crypto";
 import { getManager } from "typeorm";
 import { MessagesSent } from "../entities/MessagesSent";
 import Logger from "../helpers/Logger";
+import { IConfigSchemas } from "../interfaces/Config";
 
 /**
  * Service to publish messages in Googles Pub/Sub
@@ -27,12 +28,12 @@ export default class PubSub {
    *
    * @param {string} type
    * @param {object[]} messages
-   * @param {string} schema
+   * @param {IConfigSchemas} config
    * @memberof PubSub
    */
-  public publishBatch(type: string, messages: object[], schema: string): void {
+  public publishBatch(type: string, messages: object[], config: IConfigSchemas): void {
     for (const message of messages) {
-      this.publish(type, message, schema);
+      this.publish(type, message, config);
     }
   }
 
@@ -41,14 +42,14 @@ export default class PubSub {
    *
    * @param {string} type
    * @param {object} message
-   * @param {string} schema
+   * @param {IConfigSchemas} config
    * @return {*}  {Promise<void>}
    * @memberof PubSub
    */
   public async publish(
     type: string,
     message: object,
-    schema: string
+    config: IConfigSchemas
   ): Promise<void> {
     this.logger.debug(
       `Checking if message is new for type ${type} in topic ${this.topic}`
@@ -62,6 +63,7 @@ export default class PubSub {
         const messageId = await this.client.publishJSON({
           source: this.source,
           type,
+          additionalFields: config.additionalFields || {},
           message,
         });
         this.logger.debug(
@@ -72,7 +74,7 @@ export default class PubSub {
           .save({
             hash: this.hashData(message),
             source: this.source,
-            schema,
+            schema: config.schema,
             type,
             messageId,
           });

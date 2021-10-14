@@ -103,7 +103,7 @@ class Main {
       this.executorCache[name] = executor;
     }
     const results = await executor.execQueries(graphqlVariables);
-    this.pubSub.publishBatch(name, results, config.schema);
+    this.pubSub.publishBatch(name, results, config);
   }
 
   /**

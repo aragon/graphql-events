@@ -12,4 +12,5 @@ export interface IConfigSchemas {
   schema: string;
   network?: Networks;
   interval?: number;
+  additionalFields?: { [index: string]: string };
 }

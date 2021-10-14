@@ -14,6 +14,7 @@ Network or interval is required.
 | schema | URL to the graphql API (introspection has to be enabled) |
 | interval (optional) | Interval in which the API has to be queried in ms |
 | network (optional) | Defines the network to listen on and triggers the query on each new block |
+| additionalFields (optional) | Adds more fields in the key additionalFields to the PubSub message |
 
 Example config for a :
 ```json
@@ -22,7 +23,10 @@ Example config for a :
     "schemas": [
       {
         "schema": "https://api.thegraph.com/subgraphs/name/aragon/aragon-govern-rinkeby",
-        "interval": 10000
+        "interval": 10000,
+        "additionalFields": {
+          "network": "rinkeby"
+        }
       }
     ]
   }
