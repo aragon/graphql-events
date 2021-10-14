@@ -27,11 +27,12 @@ export default class PubSub {
    *
    * @param {string} type
    * @param {object[]} messages
+   * @param {string} schema
    * @memberof PubSub
    */
-  public publishBatch(type: string, messages: object[]): void {
+  public publishBatch(type: string, messages: object[], schema: string): void {
     for (const message of messages) {
-      this.publish(type, message);
+      this.publish(type, message, schema);
     }
   }
 
@@ -40,10 +41,15 @@ export default class PubSub {
    *
    * @param {string} type
    * @param {object} message
-   * @return {Promise<void>}
+   * @param {string} schema
+   * @return {*}  {Promise<void>}
    * @memberof PubSub
    */
-  public async publish(type: string, message: object): Promise<void> {
+  public async publish(
+    type: string,
+    message: object,
+    schema: string
+  ): Promise<void> {
     this.logger.debug(
       `Checking if message is new for type ${type} in topic ${this.topic}`
     );
@@ -66,6 +72,7 @@ export default class PubSub {
           .save({
             hash: this.hashData(message),
             source: this.source,
+            schema,
             type,
             messageId,
           });

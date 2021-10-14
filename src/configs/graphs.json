@@ -1,6 +1,10 @@
 {
-  "govern-rinkeby": {
-    "schema": "https://api.thegraph.com/subgraphs/name/aragon/aragon-govern-rinkeby",
-    "interval": 60000
+  "new-daos-govern": {
+    "schemas": [
+      {
+        "schema": "https://api.thegraph.com/subgraphs/name/aragon/aragon-govern-rinkeby",
+        "interval": 10000
+      }
+    ]
   }
 }

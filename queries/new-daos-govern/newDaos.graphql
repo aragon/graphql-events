@@ -1,0 +1,12 @@
+query ($lastRun: BigInt!) {
+  daos(
+    orderBy: createdAt
+    orderDirection: desc
+    where: { createdAt_gte: $lastRun }
+  ) {
+    id
+    name
+    token
+    createdAt
+  }
+}

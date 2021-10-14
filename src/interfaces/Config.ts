@@ -1,8 +1,15 @@
+import { Networks } from "./Web3Connections";
+
 export interface IConfigEntry {
-  schema: string;
-  interval: number;
+  schemas: IConfigSchemas[];
 }
 
 export interface IConfig {
   [index: string]: IConfigEntry;
+}
+
+export interface IConfigSchemas {
+  schema: string;
+  network?: Networks;
+  interval?: number;
 }

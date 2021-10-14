@@ -1,10 +1,10 @@
 import { ExecutionResult, graphql, GraphQLSchema } from "graphql";
-import { IConfigEntry } from "../interfaces/Config";
+import { IConfigSchemas } from "../interfaces/Config";
 import { loadSchema } from "@graphql-tools/load";
 import { UrlLoader } from "@graphql-tools/url-loader";
 import { promises as fs, existsSync } from "fs";
 import Logger from "../helpers/Logger";
-
+import { IGraphqlVariables } from "../interfaces/GaphqlVariables";
 
 /**
  * Service to run all queries and return the result
@@ -14,13 +14,14 @@ import Logger from "../helpers/Logger";
  */
 export default class QueryExecutor {
   private name: string;
-  private config: IConfigEntry;
+  private config: IConfigSchemas;
   private queries2Exec: string[] = [];
   private loadedSchema!: GraphQLSchema;
   private isLoadingSchema: Promise<void>;
   private logger: Logger;
+  private lastSuccessfulRun = Math.round(new Date().getTime() / 1000);
 
-  constructor(name: string, config: IConfigEntry) {
+  constructor(name: string, config: IConfigSchemas) {
     this.logger = new Logger(name);
     this.name = name;
     this.config = config;
@@ -32,29 +33,99 @@ export default class QueryExecutor {
    * Executes the queries found in the queries directory
    * and returns the result
    *
-   * @return {Promise<Object[]>}
+   * @param {IGraphqlVariables} [variables]
+   * @return {*}  {Promise<Object[]>}
    * @memberof QueryExecutor
    */
-  public async execQueries(): Promise<Object[]> {
-    await this.isLoadingSchema;
-    const graphqlPromises: Array<Promise<ExecutionResult>> = [];
-    for (const query of this.queries2Exec) {
-      this.logger.debug(`Executing ${query} query`);
-      const queries = (
-        await fs.readFile(`./queries/${this.name}/${query}`)
-      ).toString();
-      const queryPromise = graphql(this.loadedSchema, queries);
-      queryPromise
-        .then(() => {
-          this.logger.debug(`${query} executed successfully`);
-        })
-        .catch((e) => {
-          this.logger.error(`Failed executing ${query} query with`, e);
-        });
-      graphqlPromises.push(queryPromise);
+  public execQueries(variables?: IGraphqlVariables): Promise<Object[]> {
+    return new Promise(async (resolve, reject) => {
+      if (!variables) {
+        variables = {};
+      }
+      if (!variables.lastRun) {
+        variables.lastRun = this.lastSuccessfulRun;
+      }
+
+      await this.isLoadingSchema;
+      const graphqlPromises: Array<Promise<ExecutionResult>> = [];
+      for (const query of this.queries2Exec) {
+        const queryPromise = this.executeQuery(query, variables);
+        queryPromise
+          .then(() => {
+            this.logger.debug(`${query} executed successfully`);
+          })
+          .catch((e) => {
+            this.logger.error(`Failed executing ${query} query with`, e);
+          });
+        graphqlPromises.push(queryPromise);
+      }
+      const results = await Promise.all(graphqlPromises);
+
+      resolve(await this.handleQueryResults(results, variables));
+      const timestamp = Math.round(new Date().getTime() / 1000);
+      if (this.lastSuccessfulRun < timestamp) {
+        this.lastSuccessfulRun = timestamp;
+      }
+    });
+  }
+
+  /**
+   * Executes the query and returns the result
+   *
+   * @private
+   * @param {string} query
+   * @param {IGraphqlVariables} variables
+   * @return {*}  {Promise<ExecutionResult>}
+   * @memberof QueryExecutor
+   */
+  private async executeQuery(
+    query: string,
+    variables: IGraphqlVariables
+  ): Promise<ExecutionResult> {
+    this.logger.debug(
+      `Executing ${query} query wit variables`,
+      JSON.stringify(variables)
+    );
+    const queries = (
+      await fs.readFile(`./queries/${this.name}/${query}`)
+    ).toString();
+    const queryPromise = graphql(
+      this.loadedSchema,
+      queries,
+      undefined,
+      undefined,
+      variables
+    );
+    return queryPromise;
+  }
+
+  /**
+   * Helper function to handle the query results
+   * and retries the queries if one failed
+   *
+   * @private
+   * @param {ExecutionResult[]} results
+   * @param {IGraphqlVariables} variables
+   * @return {*}  {Promise<Object[]>}
+   * @memberof QueryExecutor
+   */
+  private async handleQueryResults(
+    results: ExecutionResult[],
+    variables: IGraphqlVariables
+  ): Promise<Object[]> {
+    for (const result of results) {
+      if (result.errors && result.errors.length > 0) {
+        this.logger.warn(
+          `Errors from API received. retrying in 5secs, Errors: `,
+          JSON.stringify(result.errors)
+        );
+        await new Promise((resolve) => setTimeout(resolve, 5000));
+        this.logger.debug(`Retrying with variables`, JSON.stringify(variables));
+        const retryResults = await this.execQueries(variables);
+        return retryResults;
+      }
     }
-    const results = await Promise.all(graphqlPromises);
-    return results.map(result => result.data as Object);
+    return results.map((result) => result.data as Object);
   }
 
   /**
