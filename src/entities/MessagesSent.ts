@@ -1,4 +1,4 @@
-import { Entity, Column, PrimaryColumn } from "typeorm";
+import { Entity, Column, PrimaryColumn, CreateDateColumn } from "typeorm";
 
 @Entity()
 export class MessagesSent {
@@ -13,4 +13,10 @@ export class MessagesSent {
 
   @Column()
   public messageId!: string
+
+  @Column()
+  public schema!: string
+
+  @CreateDateColumn()
+  public createdAt!: Date
 }
