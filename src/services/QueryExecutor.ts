@@ -49,20 +49,7 @@ export default class QueryExecutor {
       await this.isLoadingSchema;
       const graphqlPromises: Array<Promise<ExecutionResult>> = [];
       for (const query of this.queries2Exec) {
-        this.logger.debug(
-          `Executing ${query} query wit variables`,
-          JSON.stringify(variables)
-        );
-        const queries = (
-          await fs.readFile(`./queries/${this.name}/${query}`)
-        ).toString();
-        const queryPromise = graphql(
-          this.loadedSchema,
-          queries,
-          undefined,
-          undefined,
-          variables
-        );
+        const queryPromise = this.executeQuery(query, variables);
         queryPromise
           .then(() => {
             this.logger.debug(`${query} executed successfully`);
@@ -73,28 +60,72 @@ export default class QueryExecutor {
         graphqlPromises.push(queryPromise);
       }
       const results = await Promise.all(graphqlPromises);
-      for (const result of results) {
-        if (result.errors && result.errors.length > 0) {
-          this.logger.warn(
-            `Errors from API received. retrying in 5secs, Errors: `,
-            JSON.stringify(result.errors)
-          );
-          await new Promise((resolve) => setTimeout(resolve, 5000));
-          this.logger.debug(
-            `Retrying with variables`,
-            JSON.stringify(variables)
-          );
-          const retryResults = await this.execQueries(variables);
-          resolve(retryResults);
-          return;
-        }
-      }
-      resolve(results.map((result) => result.data as Object));
+
+      resolve(await this.handleQueryResults(results, variables));
       const timestamp = Math.round(new Date().getTime() / 1000);
       if (this.lastSuccessfulRun < timestamp) {
         this.lastSuccessfulRun = timestamp;
       }
     });
+  }
+
+  /**
+   * Executes the query and returns the result
+   *
+   * @private
+   * @param {string} query
+   * @param {IGraphqlVariables} variables
+   * @return {*}  {Promise<ExecutionResult>}
+   * @memberof QueryExecutor
+   */
+  private async executeQuery(
+    query: string,
+    variables: IGraphqlVariables
+  ): Promise<ExecutionResult> {
+    this.logger.debug(
+      `Executing ${query} query wit variables`,
+      JSON.stringify(variables)
+    );
+    const queries = (
+      await fs.readFile(`./queries/${this.name}/${query}`)
+    ).toString();
+    const queryPromise = graphql(
+      this.loadedSchema,
+      queries,
+      undefined,
+      undefined,
+      variables
+    );
+    return queryPromise;
+  }
+
+  /**
+   * Helper function to handle the query results
+   * and retries the queries if one failed
+   *
+   * @private
+   * @param {ExecutionResult[]} results
+   * @param {IGraphqlVariables} variables
+   * @return {*}  {Promise<Object[]>}
+   * @memberof QueryExecutor
+   */
+  private async handleQueryResults(
+    results: ExecutionResult[],
+    variables: IGraphqlVariables
+  ): Promise<Object[]> {
+    for (const result of results) {
+      if (result.errors && result.errors.length > 0) {
+        this.logger.warn(
+          `Errors from API received. retrying in 5secs, Errors: `,
+          JSON.stringify(result.errors)
+        );
+        await new Promise((resolve) => setTimeout(resolve, 5000));
+        this.logger.debug(`Retrying with variables`, JSON.stringify(variables));
+        const retryResults = await this.execQueries(variables);
+        return retryResults;
+      }
+    }
+    return results.map((result) => result.data as Object);
   }
 
   /**
