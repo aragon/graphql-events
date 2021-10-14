@@ -35,4 +35,4 @@ COPY --chown=appuser:appuser --from=builder /app/package.json /app
 COPY --chown=appuser:appuser --from=builder /app/yarn.lock /app
 
 RUN yarn --prod
-CMD ['yarn', 'run', 'start']
+ENTRYPOINT ["yarn", "start"]
