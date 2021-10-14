@@ -3,7 +3,10 @@
     "schemas": [
       {
         "schema": "https://api.thegraph.com/subgraphs/name/aragon/aragon-govern-rinkeby",
-        "interval": 10000
+        "interval": 60000,
+        "additionalFields": {
+          "network": "rinkeby"
+        }
       }
     ]
   }
