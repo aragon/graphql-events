@@ -36,10 +36,10 @@ class Main {
     );
 
     const { RPC_MAINNET, RPC_RINKEBY, RPC_POLYGON, RPC_MUMBAI } = process.env;
-    this.connect2Network(Networks.MAINNET, RPC_MAINNET || "");
-    this.connect2Network(Networks.RINKEBY, RPC_RINKEBY || "");
-    this.connect2Network(Networks.POLYGON, RPC_POLYGON || "");
-    this.connect2Network(Networks.MUMBAI, RPC_MUMBAI || "");
+    this.connectToNetwork(Networks.MAINNET, RPC_MAINNET || "");
+    this.connectToNetwork(Networks.RINKEBY, RPC_RINKEBY || "");
+    this.connectToNetwork(Networks.POLYGON, RPC_POLYGON || "");
+    this.connectToNetwork(Networks.MUMBAI, RPC_MUMBAI || "");
 
     for (const name in graphConfigs) {
       const config = (graphConfigs as IConfig)[name];
@@ -177,7 +177,7 @@ class Main {
    * @return {*}  {void}
    * @memberof Main
    */
-  private connect2Network(name: Networks, rpc: string): void {
+  private connectToNetwork(name: Networks, rpc: string): void {
     if (!rpc) {
       this.logger.warn(`No RPC for ${name} defined. Don't connect...`);
       return;
