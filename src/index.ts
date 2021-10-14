@@ -48,7 +48,7 @@ class Main {
       }
     }
 
-    new DBCleanup()
+    new DBCleanup();
   }
 
   /**

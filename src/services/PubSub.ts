@@ -45,7 +45,11 @@ export default class PubSub {
    * @return {*}  {Promise<void>}
    * @memberof PubSub
    */
-  public async publish(type: string, message: object, schema: string): Promise<void> {
+  public async publish(
+    type: string,
+    message: object,
+    schema: string
+  ): Promise<void> {
     this.logger.debug(
       `Checking if message is new for type ${type} in topic ${this.topic}`
     );

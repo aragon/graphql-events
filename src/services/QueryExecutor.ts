@@ -19,7 +19,7 @@ export default class QueryExecutor {
   private loadedSchema!: GraphQLSchema;
   private isLoadingSchema: Promise<void>;
   private logger: Logger;
-  private lastSuccessfulRun = Math.round((new Date().getTime()) / 1000)
+  private lastSuccessfulRun = Math.round(new Date().getTime() / 1000);
 
   constructor(name: string, config: IConfigSchemas) {
     this.logger = new Logger(name);
@@ -39,17 +39,20 @@ export default class QueryExecutor {
    */
   public execQueries(variables?: IGraphqlVariables): Promise<Object[]> {
     return new Promise(async (resolve, reject) => {
-      if(!variables) {
+      if (!variables) {
         variables = {};
       }
-      if(!variables.lastRun) {
+      if (!variables.lastRun) {
         variables.lastRun = this.lastSuccessfulRun;
       }
 
       await this.isLoadingSchema;
       const graphqlPromises: Array<Promise<ExecutionResult>> = [];
       for (const query of this.queries2Exec) {
-        this.logger.debug(`Executing ${query} query wit variables`, JSON.stringify(variables));
+        this.logger.debug(
+          `Executing ${query} query wit variables`,
+          JSON.stringify(variables)
+        );
         const queries = (
           await fs.readFile(`./queries/${this.name}/${query}`)
         ).toString();
@@ -72,9 +75,15 @@ export default class QueryExecutor {
       const results = await Promise.all(graphqlPromises);
       for (const result of results) {
         if (result.errors && result.errors.length > 0) {
-          this.logger.warn(`Errors from API received. retrying in 5secs, Errors: `, JSON.stringify(result.errors));
+          this.logger.warn(
+            `Errors from API received. retrying in 5secs, Errors: `,
+            JSON.stringify(result.errors)
+          );
           await new Promise((resolve) => setTimeout(resolve, 5000));
-          this.logger.debug(`Retrying with variables`, JSON.stringify(variables));
+          this.logger.debug(
+            `Retrying with variables`,
+            JSON.stringify(variables)
+          );
           const retryResults = await this.execQueries(variables);
           resolve(retryResults);
           return;
@@ -82,8 +91,8 @@ export default class QueryExecutor {
       }
       resolve(results.map((result) => result.data as Object));
       const timestamp = Math.round(new Date().getTime() / 1000);
-      if(this.lastSuccessfulRun < timestamp) {
-        this.lastSuccessfulRun = timestamp
+      if (this.lastSuccessfulRun < timestamp) {
+        this.lastSuccessfulRun = timestamp;
       }
     });
   }

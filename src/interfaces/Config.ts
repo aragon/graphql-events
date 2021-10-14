@@ -9,7 +9,7 @@ export interface IConfig {
 }
 
 export interface IConfigSchemas {
-  schema: string
-  network?: Networks,
-  interval?: number
+  schema: string;
+  network?: Networks;
+  interval?: number;
 }

@@ -9,7 +9,7 @@ import Logger from "../helpers/Logger";
  * @class DBCleanup
  */
 export default class DBCleanup {
-  private logger = new Logger('DBcleanup')
+  private logger = new Logger("DBcleanup");
   private keepUntil: number;
   private interval = 1000 * 60 * 60;
 
@@ -26,14 +26,14 @@ export default class DBCleanup {
    * @memberof DBCleanup
    */
   private async cleanUp() {
-    this.logger.debug(`Starting cleanup`)
+    this.logger.debug(`Starting cleanup`);
     const result = await getManager()
       .getRepository(MessagesSent)
       .delete({ createdAt: LessThan(new Date(Date.now() - this.keepUntil)) });
 
-    if(result.affected) {
-      this.logger.info(`Cleaned up ${result.affected} messages`)
+    if (result.affected) {
+      this.logger.info(`Cleaned up ${result.affected} messages`);
     }
-    this.logger.debug('Cleanup finished')
+    this.logger.debug("Cleanup finished");
   }
 }

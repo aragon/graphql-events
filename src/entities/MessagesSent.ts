@@ -6,17 +6,17 @@ export class MessagesSent {
   public hash!: string;
 
   @Column()
-  public source!: string
+  public source!: string;
 
   @Column()
-  public type!: string
+  public type!: string;
 
   @Column()
-  public messageId!: string
+  public messageId!: string;
 
   @Column()
-  public schema!: string
+  public schema!: string;
 
   @CreateDateColumn()
-  public createdAt!: Date
+  public createdAt!: Date;
 }
