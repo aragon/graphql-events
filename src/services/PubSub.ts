@@ -31,7 +31,11 @@ export default class PubSub {
    * @param {IConfigSchemas} config
    * @memberof PubSub
    */
-  public publishBatch(type: string, messages: object[], config: IConfigSchemas): void {
+  public publishBatch(
+    type: string,
+    messages: object[],
+    config: IConfigSchemas
+  ): void {
     for (const message of messages) {
       this.publish(type, message, config);
     }
