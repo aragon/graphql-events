@@ -23,9 +23,10 @@ export default class DBCleanup {
    * Runs the cleanup of the db
    *
    * @private
+   * @return {*}  {Promise<void>}
    * @memberof DBCleanup
    */
-  private async cleanUp() {
+  private async cleanUp(): Promise<void> {
     this.logger.debug(`Starting cleanup`);
     const result = await getManager()
       .getRepository(MessagesSent)
