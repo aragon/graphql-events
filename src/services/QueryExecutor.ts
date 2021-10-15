@@ -59,9 +59,10 @@ export default class QueryExecutor {
           });
         graphqlPromises.push(queryPromise);
       }
-      const results = await Promise.all(graphqlPromises);
+      const results = await Promise.allSettled(graphqlPromises);
+      const filtered = results.map(result => result.status === "fulfilled" ? result.value : null).filter(result => result !== null) as ExecutionResult[];
 
-      resolve(await this.handleQueryResults(results, variables));
+      resolve(await this.handleQueryResults(filtered, variables));
       const timestamp = Math.round(new Date().getTime() / 1000);
       if (this.lastSuccessfulRun < timestamp) {
         this.lastSuccessfulRun = timestamp;
