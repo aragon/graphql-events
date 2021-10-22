@@ -1,12 +1,13 @@
 import DBCleanup from "../services/DBCleanup";
 
 describe("DBCleanup", () => {
-  // set to any because it is a private function
-  const cleanUpSpy = jest
-    .spyOn(DBCleanup.prototype as any, "cleanUp")
-    .mockImplementation(async () => {});
+  let cleanUpSpy: jest.SpyInstance;
 
   beforeAll(() => {
+    // set to any because it is a private function
+    cleanUpSpy = jest
+      .spyOn(DBCleanup.prototype as any, "cleanUp")
+      .mockImplementation(async () => {});
     jest.useFakeTimers("legacy");
   });
 

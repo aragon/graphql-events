@@ -88,8 +88,14 @@ describe("PubSub", () => {
 
   describe("publish", () => {
     // set to any because it is a private function
-    let isNewSpy = jest.spyOn(PubSub.prototype as any, "isNew");
-    const hashDataSpy = jest.spyOn(PubSub.prototype as any, "hashData");
+    let isNewSpy: jest.SpyInstance;
+    let hashDataSpy: jest.SpyInstance;
+
+    beforeAll(() => {
+      // set to any because it is a private function
+      isNewSpy = jest.spyOn(PubSub.prototype as any, "isNew");
+      hashDataSpy = jest.spyOn(PubSub.prototype as any, "hashData");
+    });
 
     afterEach(() => {
       isNewSpy.mockReset();
