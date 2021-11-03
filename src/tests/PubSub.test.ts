@@ -1,9 +1,9 @@
 import "../entities/MessagesSent";
-import { PubSub as PubSubGoogle, Topic } from "@google-cloud/pubsub";
 import PubSub from "../services/PubSub";
 import Logger from "../helpers/Logger";
 import typeorm from "typeorm";
 import { MessagesSent } from "../entities/MessagesSent";
+import crypto from "crypto";
 
 jest.mock("@google-cloud/pubsub", () => {
   return {
@@ -36,6 +36,15 @@ jest.mock("typeorm", () => {
     }),
   };
 });
+jest.mock("crypto", () => {
+  return {
+    createHmac: jest.fn().mockReturnValue({
+      update: jest.fn().mockReturnValue({
+        digest: jest.fn().mockReturnValue(""),
+      }),
+    }),
+  };
+});
 
 describe("PubSub", () => {
   it("should create a Logger on creation", () => {
@@ -51,31 +60,35 @@ describe("PubSub", () => {
     const messages = [{ test: "test" }, { test: "test2" }];
     const pubSub = new PubSub("test");
     pubSub.publishBatch("test", messages, {
-      schema:
-        "testURI",
+      schema: "testURI",
       interval: 60000,
     });
     expect(publishSpy).toHaveBeenCalledTimes(2);
     expect(publishSpy).toHaveBeenNthCalledWith(1, "test", messages[0], {
-      schema:
-        "testURI",
+      schema: "testURI",
       interval: 60000,
     });
     expect(publishSpy).toHaveBeenNthCalledWith(2, "test", messages[1], {
-      schema:
-        "testURI",
+      schema: "testURI",
       interval: 60000,
     });
     publishSpy.mockRestore();
   });
 
-  it("should create a sh256 hash", () => {
+  it("should create a sha256 hash", () => {
     const pubSub = new PubSub("test");
     // set to any because it is a private function
-    const hash = (pubSub as any).hashData("test");
-    expect(hash).toBe(
-      "09922bb6f61dc55def6df909f9d0b799f421bae3853d452dd14730f3937af2d4"
-    );
+    (pubSub as any).hashData("test");
+    expect(crypto.createHmac).toHaveBeenNthCalledWith(1, "sha256", "secret");
+    expect(crypto.createHmac).toHaveBeenCalledTimes(1);
+
+    const hmac = crypto.createHmac("sha256", "secret");
+    expect(hmac.update).toHaveBeenNthCalledWith(1, JSON.stringify("test"));
+    expect(hmac.update).toHaveBeenCalledTimes(1);
+
+    const update = hmac.update(JSON.stringify("test"));
+    expect(update.digest).toHaveBeenNthCalledWith(1, "hex");
+    expect(update.digest).toHaveBeenCalledTimes(1);
   });
 
   describe("publish", () => {
@@ -138,26 +151,6 @@ describe("PubSub", () => {
       expect((pubSub as any).client.publishJSON).not.toHaveBeenCalled();
     });
 
-    it("should call hashData", async () => {
-      isNewSpy.mockRestore();
-      const pubSub = new PubSub("test");
-      await pubSub.publish(
-        "test",
-        { test: "test" },
-        {
-          schema:
-            "https://api.thegraph.com/subgraphs/name/aragon/aragon-govern-rinkeby",
-          interval: 60000,
-          additionalFields: {
-            network: "rinkeby",
-          },
-        }
-      );
-      expect(hashDataSpy).toHaveBeenCalledTimes(1);
-      expect(hashDataSpy).toHaveBeenCalledWith({ test: "test" });
-      isNewSpy = jest.spyOn(PubSub.prototype as any, "isNew");
-    });
-
     it("should save MessagesSent", async () => {
       isNewSpy.mockResolvedValueOnce(true);
       const pubSub = new PubSub("test");
@@ -199,7 +192,7 @@ describe("PubSub", () => {
         }
       );
       expect((pubSub as any).client.publishJSON).toHaveBeenCalledTimes(1);
-      expect((pubSub as any).client.publishJSON).toHaveBeenLastCalledWith({
+      expect((pubSub as any).client.publishJSON).toHaveBeenNthCalledWith(1, {
         source: "graphql-events",
         type: "test",
         additionalFields: {
@@ -231,14 +224,12 @@ describe("PubSub", () => {
         typeorm.getManager().getRepository(MessagesSent).findOne as jest.Mock
       ).mockResolvedValueOnce(undefined);
       const pubSub = new PubSub("test") as any;
-      const result = await pubSub.isNew({ test: "test" }, "test");
-      expect(result).toBe(true);
+      expect(pubSub.isNew({ test: "test" }, "test")).resolves.toBe(true);
     });
 
     it("should return false", async () => {
       const pubSub = new PubSub("test") as any;
-      const result = await pubSub.isNew({ test: "test" }, "test");
-      expect(result).toBe(false);
+      expect(pubSub.isNew({ test: "test" }, "test")).resolves.toBe(false);
     });
   });
 });
