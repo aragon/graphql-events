@@ -153,7 +153,8 @@ describe("QueryExecutor", () => {
       await queryExecutor.execQueries();
 
       // set to any to access private properties
-      expect((queryExecutor as any).logger.error).toHaveBeenCalled();
+      expect((queryExecutor as any).logger.error).toHaveBeenCalledTimes(1);
+      expect((queryExecutor as any).logger.error.mock.calls[0][0]).toHaveBeenCalledWith('Failed executing test query with');
     });
 
     it("should filter out failed queries", async () => {
