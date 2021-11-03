@@ -58,7 +58,7 @@ describe("QueryExecutor", () => {
       loadSchemaSpy.mockRestore();
     });
 
-    it("should create a logger isntance with name", () => {
+    it("should create a logger instance with name", () => {
       // set to any to access private properties
       const queryExecutor = new QueryExecutor("QueryExecutor", config) as any;
       expect(queryExecutor.logger).toBeInstanceOf(Logger);
