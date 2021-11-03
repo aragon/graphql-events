@@ -154,7 +154,7 @@ describe("QueryExecutor", () => {
 
       // set to any to access private properties
       expect((queryExecutor as any).logger.error).toHaveBeenCalledTimes(1);
-      expect((queryExecutor as any).logger.error.mock.calls[0][0]).toHaveBeenCalledWith('Failed executing test query with');
+      expect((queryExecutor as any).logger.error.mock.calls[0][0]).toBe('Failed executing test query with');
     });
 
     it("should filter out failed queries", async () => {
@@ -185,7 +185,6 @@ describe("QueryExecutor", () => {
       expect(executeQuerySpy).toHaveBeenCalledTimes(1);
       const variables = handleQueryResultsSpy.mock
         .calls[0][1] as IGraphqlVariables;
-      // set to any to access private properties
       // set to any to access private properties
       expect(variables.lastRun).toBe((queryExecutor as any).lastSuccessfulRun);
       expect(variables.blocknumber).toBe(123);
@@ -279,12 +278,11 @@ describe("QueryExecutor", () => {
         "execQueries"
       );
       queryExecutor = new QueryExecutor("name", config) as any;
-      jest.useFakeTimers();
     });
 
     afterAll(() => {
-      jest.useRealTimers();
-    });
+      execQueriesSpy.mockRestore();
+    })
 
     it("should log errors", async () => {
       const error = new Error("test");
