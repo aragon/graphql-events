@@ -56,12 +56,12 @@ describe("PubSub", () => {
       interval: 60000,
     });
     expect(publishSpy).toHaveBeenCalledTimes(2);
-    expect(publishSpy).toHaveBeenCalledWith("test", messages[0], {
+    expect(publishSpy).toHaveBeenNthCalledWith(1, "test", messages[0], {
       schema:
         "https://api.thegraph.com/subgraphs/name/aragon/aragon-govern-rinkeby",
       interval: 60000,
     });
-    expect(publishSpy).toHaveBeenCalledWith("test", messages[1], {
+    expect(publishSpy).toHaveBeenNthCalledWith(2, "test", messages[1], {
       schema:
         "https://api.thegraph.com/subgraphs/name/aragon/aragon-govern-rinkeby",
       interval: 60000,
