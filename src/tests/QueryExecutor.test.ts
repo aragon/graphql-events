@@ -229,6 +229,36 @@ describe("QueryExecutor", () => {
     });
   });
 
+  describe("filterFailedPromises", () => {
+    it("should filter out failed promises", async () => {
+      const promises = [
+        Promise.resolve({}),
+        Promise.reject(new Error("test")),
+        Promise.resolve({}),
+      ];
+      // set to any to access private properties
+      const queryExecutor = new QueryExecutor("name", config) as any;
+      const filteredPromises = queryExecutor.filterFailedPromises(
+        await Promise.allSettled(promises)
+      );
+      expect(filteredPromises).toHaveLength(2);
+    });
+
+    it("should filter out promises with null", async () => {
+      const promises = [
+        Promise.resolve({}),
+        Promise.reject(null),
+        Promise.resolve({}),
+      ];
+      // set to any to access private properties
+      const queryExecutor = new QueryExecutor("name", config) as any;
+      const filteredPromises = queryExecutor.filterFailedPromises(
+        await Promise.allSettled(promises)
+      );
+      expect(filteredPromises).toHaveLength(2);
+    });
+  });
+
   describe("handleQueryResults", () => {
     // set to any to access private properties
     let queryExecutor: any;
