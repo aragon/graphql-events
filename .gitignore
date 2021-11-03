@@ -6,3 +6,4 @@ tmp/
 temp/
 .env
 google-creds.json
+coverage/

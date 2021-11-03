@@ -10,11 +10,6 @@ describe("Web3", () => {
     jest.restoreAllMocks();
   });
 
-  afterEach(() => {
-    // idk why this is needed but it is
-    jest.resetAllMocks();
-  });
-
   describe("constructor", () => {
     let subscribeToNewBlockSpy: jest.SpyInstance;
 

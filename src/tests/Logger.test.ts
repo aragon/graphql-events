@@ -19,11 +19,21 @@ describe("Logger", () => {
     });
 
     it("should show the message", () => {
+      // with modern timers we can fake the time
+      jest
+        .useFakeTimers("modern")
+        .setSystemTime(new Date("2020-01-01").getTime());
+
       const logger = new Logger("Test");
       logger.error("Hello World");
 
-      expect(logSpy).toBeCalledTimes(1);
-      expect(logSpy).toBeCalledWith("Hello World");
+      expect(logSpy).toHaveBeenNthCalledWith(
+        1,
+        `[${new Date("2020-01-01").toISOString()}] [ERROR] [Test]`,
+        "Hello World"
+      );
+
+      jest.useFakeTimers("legacy");
     });
 
     it("should not show the message", () => {
