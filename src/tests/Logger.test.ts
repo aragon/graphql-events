@@ -23,6 +23,7 @@ describe("Logger", () => {
       logger.error("Hello World");
 
       expect(logSpy).toBeCalledTimes(1);
+      expect(logSpy).toBeCalledWith("Hello World");
     });
 
     it("should not show the message", () => {
