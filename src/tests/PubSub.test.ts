@@ -79,16 +79,16 @@ describe("PubSub", () => {
     const pubSub = new PubSub("test");
     // set to any because it is a private function
     (pubSub as any).hashData("test");
-    expect(crypto.createHmac).toHaveBeenNthCalledWith(1, "sha256", "secret");
     expect(crypto.createHmac).toHaveBeenCalledTimes(1);
+    expect(crypto.createHmac).toHaveBeenNthCalledWith(1, "sha256", "secret");
 
     const hmac = crypto.createHmac("sha256", "secret");
-    expect(hmac.update).toHaveBeenNthCalledWith(1, JSON.stringify("test"));
     expect(hmac.update).toHaveBeenCalledTimes(1);
+    expect(hmac.update).toHaveBeenNthCalledWith(1, JSON.stringify("test"));
 
     const update = hmac.update(JSON.stringify("test"));
-    expect(update.digest).toHaveBeenNthCalledWith(1, "hex");
     expect(update.digest).toHaveBeenCalledTimes(1);
+    expect(update.digest).toHaveBeenNthCalledWith(1, "hex");
   });
 
   describe("publish", () => {

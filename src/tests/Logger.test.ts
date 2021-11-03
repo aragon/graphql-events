@@ -27,6 +27,7 @@ describe("Logger", () => {
       const logger = new Logger("Test");
       logger.error("Hello World");
 
+      expect(logSpy).toBeCalledTimes(1);
       expect(logSpy).toHaveBeenNthCalledWith(
         1,
         `[${new Date("2020-01-01").toISOString()}] [ERROR] [Test]`,
@@ -69,6 +70,7 @@ describe("Logger", () => {
       const logger = new Logger("Test");
       logger.debug("Hello World");
 
+      expect(logSpy).toBeCalledTimes(1);
       expect(logSpy).toHaveBeenNthCalledWith(
         1,
         `[${new Date("2020-01-01").toISOString()}] [DEBUG] [Test]`,
@@ -85,6 +87,7 @@ describe("Logger", () => {
       const logger = new Logger("Test");
       logger.info("Hello World");
 
+      expect(logSpy).toBeCalledTimes(1);
       expect(logSpy).toHaveBeenNthCalledWith(
         1,
         `[${new Date("2020-01-01").toISOString()}] [INFO] [Test]`,
@@ -101,6 +104,7 @@ describe("Logger", () => {
       const logger = new Logger("Test");
       logger.warn("Hello World");
 
+      expect(logSpy).toBeCalledTimes(1);
       expect(logSpy).toHaveBeenNthCalledWith(
         1,
         `[${new Date("2020-01-01").toISOString()}] [WARN] [Test]`,
@@ -117,6 +121,7 @@ describe("Logger", () => {
       const logger = new Logger("Test");
       logger.error("Hello World");
 
+      expect(logSpy).toBeCalledTimes(1);
       expect(logSpy).toHaveBeenNthCalledWith(
         1,
         `[${new Date("2020-01-01").toISOString()}] [ERROR] [Test]`,
