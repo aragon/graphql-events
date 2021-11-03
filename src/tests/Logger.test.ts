@@ -62,43 +62,68 @@ describe("Logger", () => {
     });
 
     it("should log a debug message", () => {
+      jest
+        .useFakeTimers("modern")
+        .setSystemTime(new Date("2020-01-01").getTime());
+
       const logger = new Logger("Test");
       logger.debug("Hello World");
 
-      expect(logSpy).toBeCalledTimes(1);
-      expect(logSpy.mock.calls[0].join("")).toContain("[DEBUG]");
-      expect(logSpy.mock.calls[0].join("")).toContain("[Test]");
-      expect(logSpy.mock.calls[0].join("")).toContain("Hello World");
+      expect(logSpy).toHaveBeenNthCalledWith(
+        1,
+        `[${new Date("2020-01-01").toISOString()}] [DEBUG] [Test]`,
+        "Hello World"
+      );
+
+      jest.useFakeTimers("legacy");
     });
     it("should log a info message", () => {
-      const logSpy = jest.spyOn(console, "log");
+      jest
+        .useFakeTimers("modern")
+        .setSystemTime(new Date("2020-01-01").getTime());
+
       const logger = new Logger("Test");
       logger.info("Hello World");
 
-      expect(logSpy).toBeCalledTimes(1);
-      expect(logSpy.mock.calls[0].join("")).toContain("[INFO]");
-      expect(logSpy.mock.calls[0].join("")).toContain("[Test]");
-      expect(logSpy.mock.calls[0].join("")).toContain("Hello World");
+      expect(logSpy).toHaveBeenNthCalledWith(
+        1,
+        `[${new Date("2020-01-01").toISOString()}] [INFO] [Test]`,
+        "Hello World"
+      );
+
+      jest.useFakeTimers("legacy");
     });
     it("should log a warn message", () => {
-      const logSpy = jest.spyOn(console, "log");
+      jest
+        .useFakeTimers("modern")
+        .setSystemTime(new Date("2020-01-01").getTime());
+
       const logger = new Logger("Test");
       logger.warn("Hello World");
 
-      expect(logSpy).toBeCalledTimes(1);
-      expect(logSpy.mock.calls[0].join("")).toContain("[WARN]");
-      expect(logSpy.mock.calls[0].join("")).toContain("[Test]");
-      expect(logSpy.mock.calls[0].join("")).toContain("Hello World");
+      expect(logSpy).toHaveBeenNthCalledWith(
+        1,
+        `[${new Date("2020-01-01").toISOString()}] [WARN] [Test]`,
+        "Hello World"
+      );
+
+      jest.useFakeTimers("legacy");
     });
     it("should log a error message", () => {
-      const logSpy = jest.spyOn(console, "log");
+      jest
+        .useFakeTimers("modern")
+        .setSystemTime(new Date("2020-01-01").getTime());
+
       const logger = new Logger("Test");
       logger.error("Hello World");
 
-      expect(logSpy).toBeCalledTimes(1);
-      expect(logSpy.mock.calls[0].join("")).toContain("[ERROR]");
-      expect(logSpy.mock.calls[0].join("")).toContain("[Test]");
-      expect(logSpy.mock.calls[0].join("")).toContain("Hello World");
+      expect(logSpy).toHaveBeenNthCalledWith(
+        1,
+        `[${new Date("2020-01-01").toISOString()}] [ERROR] [Test]`,
+        "Hello World"
+      );
+
+      jest.useFakeTimers("legacy");
     });
   });
 });
