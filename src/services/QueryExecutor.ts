@@ -60,7 +60,9 @@ export default class QueryExecutor {
         graphqlPromises.push(queryPromise);
       }
 
-      const filtered = this.filterFailedPromises(await Promise.allSettled(graphqlPromises));
+      const filtered = this.filterFailedPromises(
+        await Promise.allSettled(graphqlPromises)
+      );
       resolve(await this.handleQueryResults(filtered, variables));
       const timestamp = Math.round(new Date().getTime() / 1000);
       if (this.lastSuccessfulRun < timestamp) {

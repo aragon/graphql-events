@@ -5,7 +5,9 @@ describe("DBCleanup", () => {
 
   beforeAll(() => {
     // set to any because it is a private function
-    cleanUpSpy = jest.spyOn(DBCleanup.prototype as any, "cleanUp").mockRejectedValue({});
+    cleanUpSpy = jest
+      .spyOn(DBCleanup.prototype as any, "cleanUp")
+      .mockRejectedValue({});
   });
 
   afterAll(() => {
@@ -15,7 +17,7 @@ describe("DBCleanup", () => {
   it("should create an interval", () => {
     const dbCleanup = new DBCleanup();
     expect(setInterval).toBeCalledTimes(1);
-    dbCleanup.destroy()
+    dbCleanup.destroy();
   });
 
   it("should call cleanUp after the interval", () => {

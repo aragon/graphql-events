@@ -154,7 +154,9 @@ describe("QueryExecutor", () => {
 
       // set to any to access private properties
       expect((queryExecutor as any).logger.error).toHaveBeenCalledTimes(1);
-      expect((queryExecutor as any).logger.error.mock.calls[0][0]).toBe('Failed executing test query with');
+      expect((queryExecutor as any).logger.error.mock.calls[0][0]).toBe(
+        "Failed executing test query with"
+      );
     });
 
     it("should filter out failed queries", async () => {
@@ -282,7 +284,7 @@ describe("QueryExecutor", () => {
 
     afterAll(() => {
       execQueriesSpy.mockRestore();
-    })
+    });
 
     it("should log errors", async () => {
       const error = new Error("test");
