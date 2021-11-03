@@ -5,25 +5,17 @@ describe("DBCleanup", () => {
 
   beforeAll(() => {
     // set to any because it is a private function
-    cleanUpSpy = jest
-      .spyOn(DBCleanup.prototype as any, "cleanUp")
-      .mockImplementation(async () => {});
-    jest.useFakeTimers("legacy");
-  });
-
-  afterEach(() => {
-    jest.useFakeTimers("legacy");
-    jest.resetAllMocks();
+    cleanUpSpy = jest.spyOn(DBCleanup.prototype as any, "cleanUp").mockRejectedValue({});
   });
 
   afterAll(() => {
-    jest.useRealTimers();
     cleanUpSpy.mockRestore();
   });
 
   it("should create an interval", () => {
-    new DBCleanup();
+    const dbCleanup = new DBCleanup();
     expect(setInterval).toBeCalledTimes(1);
+    dbCleanup.destroy()
   });
 
   it("should call cleanUp after the interval", () => {
@@ -31,7 +23,7 @@ describe("DBCleanup", () => {
 
     // ignore typescript erros because interval is a private property
     // @ts-ignore
-    jest.advanceTimersByTime(dbCleanup.interval + 10);
+    jest.advanceTimersByTime(dbCleanup.interval);
     expect(cleanUpSpy).toBeCalledTimes(1);
   });
 });

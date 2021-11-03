@@ -6,12 +6,13 @@ jest.mock("../helpers/Logger");
 jest.mock("ethers");
 
 describe("Web3", () => {
-  afterEach(() => {
-    jest.resetAllMocks();
-  });
-
   afterAll(() => {
     jest.restoreAllMocks();
+  });
+
+  afterEach(() => {
+    // idk why this is needed but it is
+    jest.resetAllMocks();
   });
 
   describe("constructor", () => {

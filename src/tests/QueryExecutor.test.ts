@@ -32,6 +32,14 @@ const config: IConfigSchemas = {
 };
 
 describe("QueryExecutor", () => {
+  beforeAll(() => {
+    jest.useRealTimers();
+  });
+
+  afterAll(() => {
+    jest.useFakeTimers();
+  });
+
   afterEach(() => {
     jest.clearAllMocks();
   });
@@ -184,7 +192,7 @@ describe("QueryExecutor", () => {
 
     it("should update lastSuccessfulRun", async () => {
       const previous = (queryExecutor as any).lastSuccessfulRun;
-      executeQuerySpy.mockImplementation(async () => {
+      executeQuerySpy.mockImplementationOnce(async () => {
         await new Promise((resolve) => setTimeout(resolve, 1000));
         return { data: [] };
       });
