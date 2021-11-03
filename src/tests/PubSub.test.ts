@@ -38,14 +38,6 @@ jest.mock("typeorm", () => {
 });
 
 describe("PubSub", () => {
-  afterEach(() => {
-    jest.clearAllMocks();
-  });
-
-  afterAll(() => {
-    jest.restoreAllMocks();
-  });
-
   it("should create a Logger on creation", () => {
     new PubSub("test");
     expect(Logger).toHaveBeenCalledTimes(1);
