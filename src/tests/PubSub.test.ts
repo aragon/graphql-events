@@ -52,18 +52,18 @@ describe("PubSub", () => {
     const pubSub = new PubSub("test");
     pubSub.publishBatch("test", messages, {
       schema:
-        "https://api.thegraph.com/subgraphs/name/aragon/aragon-govern-rinkeby",
+        "testURI",
       interval: 60000,
     });
     expect(publishSpy).toHaveBeenCalledTimes(2);
     expect(publishSpy).toHaveBeenNthCalledWith(1, "test", messages[0], {
       schema:
-        "https://api.thegraph.com/subgraphs/name/aragon/aragon-govern-rinkeby",
+        "testURI",
       interval: 60000,
     });
     expect(publishSpy).toHaveBeenNthCalledWith(2, "test", messages[1], {
       schema:
-        "https://api.thegraph.com/subgraphs/name/aragon/aragon-govern-rinkeby",
+        "testURI",
       interval: 60000,
     });
     publishSpy.mockRestore();
