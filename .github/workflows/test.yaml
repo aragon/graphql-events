@@ -1,0 +1,17 @@
+name: test
+on:
+  push:
+    branches:
+      - "*"
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: build
+        run: yarn --dev
+      - name: lint
+        run: yarn lint
+      - name: test
+        run: yarn test

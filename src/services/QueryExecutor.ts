@@ -59,9 +59,11 @@ export default class QueryExecutor {
           });
         graphqlPromises.push(queryPromise);
       }
-      const results = await Promise.all(graphqlPromises);
 
-      resolve(await this.handleQueryResults(results, variables));
+      const filtered = this.filterFailedPromises(
+        await Promise.allSettled(graphqlPromises)
+      );
+      resolve(await this.handleQueryResults(filtered, variables));
       const timestamp = Math.round(new Date().getTime() / 1000);
       if (this.lastSuccessfulRun < timestamp) {
         this.lastSuccessfulRun = timestamp;
@@ -97,6 +99,22 @@ export default class QueryExecutor {
       variables
     );
     return queryPromise;
+  }
+
+  /**
+   * Returns only fulfilled promises with results not null
+   *
+   * @private
+   * @param {PromiseSettledResult<ExecutionResult>[]} promises
+   * @return {*}  {ExecutionResult[]}
+   * @memberof QueryExecutor
+   */
+  private filterFailedPromises(
+    promises: PromiseSettledResult<ExecutionResult>[]
+  ): ExecutionResult[] {
+    return promises
+      .filter((promise) => promise.status === "fulfilled")
+      .filter((result) => result !== null) as ExecutionResult[];
   }
 
   /**
