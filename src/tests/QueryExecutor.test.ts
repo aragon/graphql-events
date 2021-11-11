@@ -5,6 +5,7 @@ import QueryExecutor from "../services/QueryExecutor";
 import { IGraphqlVariables } from "../interfaces/GaphqlVariables";
 import { graphql } from "graphql";
 import { promises as fs, existsSync } from "fs";
+import { loadSchema } from "@graphql-tools/load";
 
 jest.mock("../helpers/Logger");
 jest.mock("graphql", () => ({
@@ -21,6 +22,10 @@ jest.mock("fs", () => {
     existsSync: jest.fn(),
   };
 });
+jest.mock("@graphql-tools/load", () => ({
+  ...jest.requireActual("@graphql-tools/load"),
+  loadSchema: jest.fn(),
+}));
 
 const config: IConfigSchemas = {
   schema: "schema",
@@ -275,6 +280,7 @@ describe("QueryExecutor", () => {
     let execQueriesSpy: jest.SpyInstance;
 
     beforeAll(() => {
+      jest.useFakeTimers("legacy");
       execQueriesSpy = jest.spyOn(
         QueryExecutor.prototype as any,
         "execQueries"
