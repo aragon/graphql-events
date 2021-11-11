@@ -36,6 +36,7 @@ describe("DBCleanup", () => {
 
     it("should call cleanUp after the interval", () => {
       const dbCleanup = new DBCleanup();
+      cleanUpSpy.mockResolvedValueOnce({});
 
       // ignore typescript erros because interval is a private property
       // @ts-ignore
