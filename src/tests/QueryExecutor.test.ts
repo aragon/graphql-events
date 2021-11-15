@@ -274,19 +274,16 @@ describe("QueryExecutor", () => {
     });
 
     it("should return the data", async () => {
-      const data = ['asdf']
-      const promises = [
-        Promise.resolve(data),
-        Promise.reject(null)
-      ];
+      const data = ["asdf"];
+      const promises = [Promise.resolve(data), Promise.reject(null)];
       // set to any to access private properties
       const queryExecutor = new QueryExecutor("name", config) as any;
       const filteredPromises = queryExecutor.filterFailedPromises(
         await Promise.allSettled(promises)
       );
       expect(filteredPromises).toHaveLength(1);
-      expect(filteredPromises[0]).toBe(data)
-    })
+      expect(filteredPromises[0]).toBe(data);
+    });
   });
 
   describe("handleQueryResults", () => {

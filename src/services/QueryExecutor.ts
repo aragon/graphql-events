@@ -114,8 +114,13 @@ export default class QueryExecutor {
   ): ExecutionResult[] {
     return promises
       .filter((promise) => promise.status === "fulfilled")
-      .filter((result) => (result as PromiseFulfilledResult<ExecutionResult>).value !== null)
-      .map((result) => (result as PromiseFulfilledResult<ExecutionResult>).value);
+      .filter(
+        (result) =>
+          (result as PromiseFulfilledResult<ExecutionResult>).value !== null
+      )
+      .map(
+        (result) => (result as PromiseFulfilledResult<ExecutionResult>).value
+      );
   }
 
   /**
