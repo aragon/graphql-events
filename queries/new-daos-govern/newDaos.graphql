@@ -6,7 +6,38 @@ query ($lastRun: BigInt!) {
   ) {
     id
     name
-    token
     createdAt
+    queue {
+      id
+      address
+      nonce
+      config {
+        executionDelay
+        scheduleDeposit {
+          token
+          amount
+          decimals
+          symbol
+          name
+        }
+        challengeDeposit {
+          token
+          amount
+          decimals
+          symbol
+          name
+        }
+        resolver
+        rules
+        maxCalldataSize
+      }
+    }
+    executor {
+      id
+      address
+    }
+    token
+    registrant
+    minter
   }
 }
